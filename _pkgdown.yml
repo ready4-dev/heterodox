@@ -1,0 +1,17 @@
+development:
+  mode: auto
+reference:
+- title: "Functions"
+- contents:
+  - add_class_var
+  - add_kmean_cls_var
+  - calculate_mean_RI
+  - get_fake_aqol6d_ds
+  - make_cvdn_ds
+  - make_cvdn_ls
+  - make_pca_tbl
+  - plot_average_fit
+  - plot_cluster
+  - plot_individual_fit
+  - plot_pca
+  - print_cluster_plots

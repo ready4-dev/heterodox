@@ -1,15 +1,15 @@
-plot_average_fit <- function(cv_ds_tb,
+plot_average_fit <- function(cvdn_ds_tb,
                              clss_var_nm_1L_chr = "Classes"){
-  nbr_of_clss_1L_dbl <- get_nbr_of_clss(cv_ds_tb,
+  nbr_of_clss_1L_dbl <- get_nbr_of_clss(cvdn_ds_tb,
                                         clss_var_nm_1L_chr = clss_var_nm_1L_chr)
   plot_ls <- list()
-  plot_ls[[1]] <- make_average_fit_plt(cv_ds_tb,
+  plot_ls[[1]] <- make_average_fit_plt(cvdn_ds_tb,
                                        nbr_of_clss_1L_dbl = nbr_of_clss_1L_dbl,
                                        statistic_var_nm_1L_chr = "AIC")
-  plot_ls[[2]] <- make_average_fit_plt(cv_ds_tb,
+  plot_ls[[2]] <- make_average_fit_plt(cvdn_ds_tb,
                                        nbr_of_clss_1L_dbl = nbr_of_clss_1L_dbl,
                                        statistic_var_nm_1L_chr = "BIC")
-  plot_ls[[3]] <- make_average_fit_plt(cv_ds_tb,
+  plot_ls[[3]] <- make_average_fit_plt(cvdn_ds_tb,
                                        maximise_1L_lgl = T,
                                        nbr_of_clss_1L_dbl = nbr_of_clss_1L_dbl,
                                        statistic_var_nm_1L_chr = "logLik",
@@ -59,13 +59,13 @@ plot_cluster<- function(ds_tb,
                                 nrow = 2,
                                 heights=c(10, 1)))
 }
-plot_individual_fit <- function(cv_ds_tb,
+plot_individual_fit <- function(cvdn_ds_tb,
                                 clss_var_nm_1L_chr = "Classes",
                                 fold_var_nm_1L_chr = "Fold",
                                 legend_label_1L_chr = "Datasets"){
-  nbr_of_clss_1L_dbl <- get_nbr_of_clss(cv_ds_tb,
+  nbr_of_clss_1L_dbl <- get_nbr_of_clss(cvdn_ds_tb,
                                         clss_var_nm_1L_chr = clss_var_nm_1L_chr)
-  tfd_cvdn_ds_tb <- transform_cvdn_ds_for_ind_plts(cv_ds_tb,
+  tfd_cvdn_ds_tb <- transform_cvdn_ds_for_indl_plts(cvdn_ds_tb,
                                                clss_var_nm_1L_chr = clss_var_nm_1L_chr,
                                                fold_var_nm_1L_chr = fold_var_nm_1L_chr)
 

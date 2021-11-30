@@ -8,16 +8,16 @@ add_class_var <- function(ds_tb,
                                                                        which.max)))
   return(ds_tb)
 }
-add_kmeans_cls_var <- function(ds_tb,
+add_kmean_cls_var <- function(ds_tb,
                                classes_1L_int,
                                components_1L_int,
                                pca_df,
-                               kmeans_var_nm_1L_chr = "kmeans_cls_int",
+                               kmean_var_nm_1L_chr = "kmeans_cls_int",
                                start_1L_int = 25L){
-  kmeans_ls <- kmeans(pca_df[,1:components_1L_int],
-                      centers = classes_1L_int,
-                      nstart = start_1L_int)
+  kmean_ls <- stats::kmeans(pca_df[,1:components_1L_int],
+                            centers = classes_1L_int,
+                            nstart = start_1L_int)
   ds_tb <- ds_tb %>%
-    dplyr::mutate(!!rlang::sym(kmeans_var_nm_1L_chr) := as.factor(kmeans_ls$cluster))
+    dplyr::mutate(!!rlang::sym(kmean_var_nm_1L_chr) := as.factor(kmean_ls$cluster))
   return(ds_tb)
 }

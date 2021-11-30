@@ -2,8 +2,8 @@ print_cluster_plots <- function(ds_tb,
                                 clusters_1L_int,
                                 var_nms_chr,
                                 nbr_of_folds_1L_int = 2L,
-                                var_idc_1L_int = 1L){
-  folds_int <- caret::createFolds(ds_tb$Q1,
+                                var_idx_1L_int = 1L){
+  folds_int <- caret::createFolds(ds_tb %>% dplyr::pull(!!rlang::sym(var_nms_chr[var_idx_1L_int])),
                                   k = nbr_of_folds_1L_int,
                                   list = FALSE)
   for(i in 1:nbr_of_folds_1L_int){

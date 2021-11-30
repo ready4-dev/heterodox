@@ -1,17 +1,17 @@
-make_cvdn_ds <- function(cv_results_ls,
+make_cvdn_ds <- function(cvdn_results_ls,
                        select_from_ls_1L_int = 1L,
                        select_from_df_int = NA_integer_,
                        fold_id_nm_1L_chr = "Fold"){
-  # cv_results<-lapply(cv_results_ls, `[[`, 2)
-  # cv_results<-lapply(cv_results, `[`, c(1,4))
-  tfd_cvdn_results_ls <- lapply(cv_results_ls, `[[`, select_from_ls_1L_int)
+  # cvdn_results<-lapply(cvdn_results_ls, `[[`, 2)
+  # cvdn_results<-lapply(cvdn_results, `[`, c(1,4))
+  tfd_cvdn_results_ls <- lapply(cvdn_results_ls, `[[`, select_from_ls_1L_int)
   if(!is.na(select_from_df_int[1])){
-    cv_ds_xx <- lapply(tfd_cvdn_results_ls, `[`, select_from_df_int)
+    cvdn_ds_xx <- lapply(tfd_cvdn_results_ls, `[`, select_from_df_int)
   }else{
-    cv_ds_xx <- data.table::rbindlist(tfd_cvdn_results_ls,
-                                      idcol = fold_id_nm_1L_chr)
+    cvdn_ds_xx <- data.table::rbindlist(tfd_cvdn_results_ls,
+                                        idcol = fold_id_nm_1L_chr)
   }
-  return(cv_ds_xx)
+  return(cvdn_ds_xx)
 }
 make_cvdn_points_ds <- function(smry_cvdn_ds_tb,
                               statistic_var_nm_1L_chr,
@@ -24,23 +24,23 @@ make_cvdn_points_ds <- function(smry_cvdn_ds_tb,
     fns_ls <- list(fn1 = which.min,
                    fn2 = min)
   }
-  cv_points_ds_df <- data.frame(var_one = smry_cvdn_ds_tb[rlang::exec(fns_ls$fn1,smry_cvdn_ds_tb %>% dplyr::pull(!!rlang::sym(statistic_var_nm_1L_chr))),#DIFF
+  cvdn_points_ds_df <- data.frame(var_one = smry_cvdn_ds_tb[rlang::exec(fns_ls$fn1,smry_cvdn_ds_tb %>% dplyr::pull(!!rlang::sym(statistic_var_nm_1L_chr))),#DIFF
                                                         clss_var_nm_1L_chr],
                                 var_two = rlang::exec(fns_ls$fn2,smry_cvdn_ds_tb %>%
                                                         dplyr::pull(!!rlang::sym(statistic_var_nm_1L_chr))))
-  names(cv_points_ds_df) <- c(clss_var_nm_1L_chr,statistic_var_nm_1L_chr)#DIFF
-  return(cv_points_ds_df)
+  names(cvdn_points_ds_df) <- c(clss_var_nm_1L_chr,statistic_var_nm_1L_chr)#DIFF
+  return(cvdn_points_ds_df)
 }
-make_average_fit_plt <- function(cv_ds_tb,
+make_average_fit_plt <- function(cvdn_ds_tb,
                                  nbr_of_clss_1L_dbl,
                                  statistic_var_nm_1L_chr,
                                  clss_var_nm_1L_chr = "Classes",
                                  maximise_1L_lgl = F,
                                  y_label_1L_chr = NA_character_){
-  smry_cvdn_ds_tb <- make_smry_cvdn_ds(cv_ds_tb,
+  smry_cvdn_ds_tb <- make_smry_cvdn_ds(cvdn_ds_tb,
                                    clss_var_nm_1L_chr = clss_var_nm_1L_chr,
                                    statistic_var_nm_1L_chr = statistic_var_nm_1L_chr)
-  cv_points_ds_df <- make_cvdn_points_ds(smry_cvdn_ds_tb,
+  cvdn_points_ds_df <- make_cvdn_points_ds(smry_cvdn_ds_tb,
                                        maximise_1L_lgl = maximise_1L_lgl,
                                        statistic_var_nm_1L_chr = statistic_var_nm_1L_chr)
   plt <- ggplot2::ggplot(smry_cvdn_ds_tb) +
@@ -55,8 +55,8 @@ make_average_fit_plt <- function(cv_ds_tb,
   plt <- plt +
     ggplot2::scale_x_continuous(breaks = 2:nbr_of_clss_1L_dbl,
                                 limits = c(2, nbr_of_clss_1L_dbl)) +
-    ggplot2::geom_point(ggplot2::aes(x = cv_points_ds_df %>% dplyr::pull(!!rlang::sym(clss_var_nm_1L_chr)), #DIFF
-                                     y = cv_points_ds_df %>% dplyr::pull(!!rlang::sym(statistic_var_nm_1L_chr))), #DIFF
+    ggplot2::geom_point(ggplot2::aes(x = cvdn_points_ds_df %>% dplyr::pull(!!rlang::sym(clss_var_nm_1L_chr)), #DIFF
+                                     y = cvdn_points_ds_df %>% dplyr::pull(!!rlang::sym(statistic_var_nm_1L_chr))), #DIFF
                         color = "red",
                         size=3)
   return(plt)
@@ -89,10 +89,10 @@ make_individual_fit_plt <- function(tfd_cvdn_ds_tb,
                         size=2)
   return(plt)
 }
-make_Rand_idx_mat <- function(cv_ds_ls,
+make_Rand_idx_mat <- function(cvdn_ds_ls,
                               ds_tb,
                               id_var_nm_1L_chr = "ID"){
-  RI_calcn_ds_tb <- make_ds_for_RI_calc(cv_ds_ls = cv_ds_ls,
+  RI_calcn_ds_tb <- make_ds_for_RI_calc(cvdn_ds_ls = cvdn_ds_ls,
                                         ds_tb = ds_tb,
                                         id_var_nm_1L_chr = id_var_nm_1L_chr)
   nbr_of_folds_1L_int <- ncol(RI_calcn_ds_tb)
@@ -105,14 +105,14 @@ make_Rand_idx_mat <- function(cv_ds_ls,
   diag(Rand_idx_mat) <- NA
   return(Rand_idx_mat)
 }
-make_ds_for_RI_calc <- function(cv_ds_ls,
+make_ds_for_RI_calc <- function(cvdn_ds_ls,
                                 ds_tb,
                                 id_var_nm_1L_chr = "ID"){
   tfd_ds_tb <- ds_tb  %>%
     dplyr::select(!!rlang::sym(id_var_nm_1L_chr))
-  for(i in 1:length(cv_ds_ls)){
+  for(i in 1:length(cvdn_ds_ls)){
     tfd_ds_tb <- tfd_ds_tb %>%
-      dplyr::left_join(cv_ds_ls[[i]],
+      dplyr::left_join(cvdn_ds_ls[[i]],
                        by = id_var_nm_1L_chr)
     names(tfd_ds_tb)[i+1] <- paste("fold",i)
   }
@@ -133,11 +133,11 @@ make_pca_tbl <- function(ds_tb,
                                                                    dplyr::pull(!!rlang::sym(class_var_nm_1L_chr))))
   return(pca_df)
 }
-make_smry_cvdn_ds <- function(cv_ds_tb,
+make_smry_cvdn_ds <- function(cvdn_ds_tb,
                             statistic_var_nm_1L_chr,
                             clss_var_nm_1L_chr = "Classes"
 ){
-  smry_cvdn_ds_tb <- cv_ds_tb %>% # RENAME
+  smry_cvdn_ds_tb <- cvdn_ds_tb %>% # RENAME
     dplyr::group_by(!!rlang::sym(clss_var_nm_1L_chr)) %>%
     dplyr::summarise(!!rlang::sym(statistic_var_nm_1L_chr) := mean(!!rlang::sym(statistic_var_nm_1L_chr))) %>% #DIFF
     dplyr::ungroup()

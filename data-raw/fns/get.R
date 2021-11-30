@@ -13,9 +13,9 @@ get_fake_aqol6d_ds <- function(){
     dplyr::filter(round == "Baseline")
   return(ds_tb)
 }
-get_nbr_of_clss <- function(cv_ds_tb,
+get_nbr_of_clss <- function(cvdn_ds_tb,
                             clss_var_nm_1L_chr = "Classes"){
-  nbr_of_clss_1L_dbl <- cv_ds_tb %>%
+  nbr_of_clss_1L_dbl <- cvdn_ds_tb %>%
     dplyr::pull(!!rlang::sym(clss_var_nm_1L_chr)) %>% #
     unique() %>%
     length() + 1
