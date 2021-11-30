@@ -72,7 +72,7 @@ make_cvdn_ls <- function (ds_tb, folds_int, nbr_cores_1L_int = 1L, nbr_clss_1L_i
 {
     cvdn_ls <- parallel::mclapply(1:max(folds_int), function(i) {
         print(i)
-        training_set <- ds_tb[nbr_of_folds_1L_int != i, ]
+        training_set <- ds_tb[folds_int != i, ]
         train_return <- fit_mixture_mdl_clusters(training_set, 
             nbr_clss_1L_int = nbr_clss_1L_int, var_nms_chr = var_nms_chr)
     }, mc.cores = nbr_cores_1L_int)

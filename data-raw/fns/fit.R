@@ -22,13 +22,13 @@ fit_mixture_mdl_clusters <- function(ds_tb,
   return_ds_tb <- ds_tb %>% dplyr::select(ID)
   for(n in 2:nbr_clss_1L_int){
     model_mdl <- fit_mixture_mdl(ds_tb,
-                                 classes_1L_int = n,
+                                 clusters_1L_int = n,
                                  var_nms_chr = var_nms_chr)
     return_df <- rbind(return_df,
                        data.frame(Classes = n,
-                                  AIC = stats:AIC(model_mdl),
+                                  AIC = stats::AIC(model_mdl),
                                   BIC = stats::BIC(model_mdl),
-                                  logLik = stats::logLik(model_mdl),
+                                  logLik = depmixS4::logLik(model_mdl),
                                   Par = model_mdl@npars))
     return_ds_tb[[paste0("n",n)]] <- apply(model_mdl@posterior %>%
                                              dplyr::select(-state),
