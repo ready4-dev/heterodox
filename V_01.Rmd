@@ -10,35 +10,22 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-# Install dev_package(s)
-# Load dev_package(s)
-library(depmixS4) # Must be in depends of pkg
+library(heterodox) # 
 library(ready4use)
 ```
-```{r child="Functions.Rmd", echo=FALSE}
-```
 
+## Reproducibility pre-requisites
 ```{r}
 sessionInfo()
+```
+```{r}
+set.seed(12345)
 ```
 
 ## Import data
 
 ```{r}
-ds_tb <- ready4use::Ready4useRepos(dv_nm_1L_chr = "fakes",
-                               dv_ds_nm_1L_chr = "https://doi.org/10.7910/DVN/W95KED",
-                               dv_server_1L_chr = "dataverse.harvard.edu") %>%
-  ingest(fls_to_ingest_chr = "ymh_clinical_dyad_r4") %>%
-  procureSlot("b_Ready4useIngest") %>%
-  procure("ymh_clinical_dyad_r4") %>%
-  procureSlot(slot_nm_1L_chr = "ds_tb") %>% 
-    dplyr::rename_with(~stringr::str_replace(.,"aqol6d_q","Q"), .cols = everything()) %>%
-  dplyr::rename(ID = fkClientID) %>%
-  dplyr::filter(round == "Baseline")
-```
-
-```{r}
-set.seed(12345)
+ds_tb <- get_fake_aqol6d_ds()
 ```
 
 ```{r}
@@ -46,20 +33,22 @@ folds_int <- caret::createFolds(ds_tb$Q1, k = 10,list = FALSE)
 ```
 
 ```{r}
-cv_results_ls <- readRDS("CV_results.rds")
-if(is.null(cv_results_ls)){
+if(file.exists("CV_results.rds")){
+  cv_results_ls <- readRDS("CV_results.rds")
+}else{
     cv_results_ls <- make_cvdn_ls(ds_tb,
-                                 folds_int = folds_int,
-                                 var_nms_chr = paste0("Q",
+                                  folds_int = folds_int,
+                                  var_nms_chr = paste0("Q",
                                                       1:20)
-                                 ) # CHANGE TO RESULTS_LS
-    saveRDS(cv_results_ls,  "CV_results.rds") # CHANGE TO RESULTS_LS
+                                 ) 
+    saveRDS(cv_results_ls,  "CV_results.rds")
 }
 ```
 
 ```{r}
-cv_ds_tb <- make_cv_ds(cv_results_ls)
+cv_ds_tb <- make_cvdn_ds(cv_results_ls)
 ```
+
 ## Plot average fitting index
 
 ```{r}
@@ -75,6 +64,7 @@ individual_fit_plt
 
 ## Agreements between folds
 Use Rand index to calculate agreement between each fold.
+
 ```{r}
 calculate_mean_RI(cv_results_ls,
                   ds_tb = ds_tb,
@@ -86,19 +76,22 @@ calculate_mean_RI(cv_results_ls,
 Find the best number of classes.
 
 ```{r}
-folds_int <- as.factor(ds_tb$s_centre) %>%# EDITED
-  as.numeric() # GENERALISE VARIABLE SELECTION
-loso_results_ls <- readRDS("LOSO_CV_results.rds") # MAKE THIS A FUNCTION.
-if(is.null(loso_results_ls)){
-  loso_results_ls <- make_cvdn_ls(ds_tb,folds_int) 
+# 
+if(file.exists("LOSO_cvdn_results.rds")){
+  loso_results_ls <- readRDS("LOSO_cvdn_results.rds") 
+}else{
+  loso_results_ls <- make_cvdn_ls(ds_tb,
+                                  folds_int = as.factor(ds_tb$s_centre) %>%
+  as.numeric()) 
   saveRDS(loso_results_ls,  
-          "LOSO_CV_results.rds")
+          "LOSO_cvdn_results.rds")
 }
 ```
 
 ```{r}
-loso_ds_tb <- make_cv_ds(loso_results_ls)
+loso_ds_tb <- make_cvdn_ds(loso_results_ls)
 ```
+
 ## Plot average fitting index
 
 ```{r}
@@ -107,12 +100,15 @@ averate_fit_plt
 ```
 
 ## Plot individual fitting index
+
 ```{r}
 individual_fit_plt <- plot_individual_fit(loso_ds_tb)
 individual_fit_plt
 ```
+
 ## Agreements between folds
 Use Rand index to calculate agreement between each fold.
+
 ```{r}
 calculate_mean_RI(loso_results_ls, # NOT WORKING
                   ds_tb = ds_tb,
@@ -123,7 +119,6 @@ calculate_mean_RI(loso_results_ls, # NOT WORKING
 ## Split half CV
 
 The testing data is much smaller than the training data and can be a biased representation of the data. Therefore we only broadly evaluate whether the 4 cluster solution identifies similar group membership. 
-
 
 ```{r,fig.height=8,fig.width=10}
 print_cluster_plots(ds_tb,
@@ -164,6 +159,7 @@ plot_pca(ds_tb,
          pca_df = pca_df,
          class_var_nm_1L_chr = "class_int")
 ```
+
 ## Sensitivity analysis 
 
 Sensitivity analysis with k-means clustering based on first five principal compoments. 
@@ -174,16 +170,19 @@ ds_tb <- add_kmeans_cls_var(ds_tb,
                             components_1L_int = 5L,
                             pca_df = pca_df,
                             start_1L_int = 25L)
-#cross tabulate
-table(ds_tb$class_int, 
-      ds_tb$kmeans_cls_int)
 
 ```
+
 ```{r}
-#check Rand Index
+table(ds_tb$class_int, 
+      ds_tb$kmeans_cls_int)
+```
+
+```{r}
 aricode::RI(ds_tb$class_int,
             ds_tb$kmeans_cls_int)
 ```
+
 ```{r,fig.height=8,fig.width=10} 
 plot_cluster(ds_tb,
              cluster_int = ds_tb$kmeans_cls_int)
