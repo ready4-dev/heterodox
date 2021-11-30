@@ -8,369 +8,14 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-```{r}
-# Function that fit LCA for n clusters
-fit_mix<-function(data,n){
-     model_def <- depmixS4::mix(list(Q1 ~ 1, Q2 ~ 1, Q3 ~ 1, Q4~1, Q5~1,
-                                Q6 ~ 1, Q7 ~ 1, Q8 ~ 1, Q9~1, Q10~1,
-                                Q11 ~ 1, Q12 ~ 1, Q13 ~ 1, Q14~1, Q15~1,
-                                Q16 ~ 1, Q17 ~ 1, Q18 ~ 1, Q19~1, Q20~1),
-                           family = rep(list(depmixS4::multinomial("identity")), 20),
-                           data = data,
-                           nstates = n, 
-                           nstart=rep(1/n,n))
-     fit(model_def)
-}
-
-# Function that return fitting index and results for a data set for 2-15clusters
-fit_mix_clusters <- function(data,
-                             nbr_clss_1L_int = 15L){
-  
-    #define return data structure
-    return <- data.frame(
-        Classes =integer(),
-        AIC=double(),
-        BIC=double(), 
-        logLik=double(),
-        Par=double())
-    return_data<-data %>% dplyr::select(ID)
-    #loop through all n number of clusters 
-    for(n in 2:nbr_clss_1L_int){
-      
-        fit.mod <- fit_mix(data,n)
-        return<-rbind(return,data.frame(Classes=n,AIC=AIC(fit.mod),
-                                        BIC=BIC(fit.mod),logLik=logLik(fit.mod),Par=fit.mod@npars))
-        return_data[[paste0("n",n)]]<-apply(fit.mod@posterior %>% dplyr::select(-state),1,which.max)
-    }
-    list(return,return_data)
-}
-
-# 10 fold CV
-CrossValidate <- function(ds_tb,
-                          folds_int,
-                          nbr_cores_1L_int = 1L,
-                          nbr_clss_1L_int = 15L){## Windows, must be one
-    # fun training and testing datasets using parallel computing
-    final_return <- parallel::mclapply(1:max(folds_int), function(i) {
-        #printing fold 
-        print(i)
-        # Create training set for this iteration
-        training_set <- ds_tb[nbr_of_folds_1L_int != i,]
-        #run on training data
-        train_return<-fit_mix_clusters(training_set,
-                                       nbr_clss_1L_int = nbr_clss_1L_int) 
-    }, mc.cores = nbr_cores_1L_int) # Change from 8
-    return(final_return)
-}
-# function extract legend of figure 
-g_legend <- function(a.gplot){
-  tmp <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(a.gplot))
-  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
-  legend <- tmp$grobs[[leg]]
-  return(legend)
-  }
-
-# function plot sum domain scores
-plot_cluster<- function(ds_tb,cluster){
-    #extract column name 
-    colNames <- names(ds_tb)[21:26]
-    ds_tb$cluster<-cluster
-    
-    plot<-list()
-    # loop summary measures 
-    for(i in colNames){ 
-    
-      labelx<-eval(parse(text=paste0("attributes(ds_tb$",i,")$label")))
-      labelx<- str_to_sentence(str_sub(labelx,38,55))
-      plot[[i]]<- ggplot(ds_tb, aes_string(i)) +
-          geom_density(aes(fill=cluster,colour=cluster), alpha=0.4 ,adjust=2.5) +
-          labs(x=labelx,y="Density")  + 
-          theme_bw() +theme(legend.position="none")+
-          scale_fill_manual(values  = c("#fdcc8a","#fc8d59","#e34a33", "#b30000")) +
-          scale_colour_manual(values  = c("#fdcc8a","#fc8d59","#e34a33", "#b30000")) 
-          
-    }          
-    #save legend from one plot 
-   legend<-ggplot(ds_tb, aes_string(i)) +
-          geom_density(aes(fill=cluster,colour=cluster), alpha=0.4 ,adjust=2.5) +
-          labs(x=labelx,y="Density",fill="Class",col="Class")  + 
-          theme_bw() +theme(legend.position="bottom")+
-          scale_fill_manual(values  = c("#fdcc8a","#fc8d59","#e34a33", "#b30000")) +
-          scale_colour_manual(values  = c("#fdcc8a","#fc8d59","#e34a33", "#b30000")) 
-   legend <- g_legend(legend)
-   #arrange all plot together
-   print(grid.arrange(ggarrange(plotlist=plot,nrow=3,ncol=2) ,
-             legend, nrow=2,heights=c(10, 1)))
-}
-```
-
-```{r}
-calculate_mean_RI <- function(cv_results_ls,
-                              ds_tb,
-                              select_from_ls_1L_int = 2L,
-                              select_from_df_int = c(1L,4L)){
-  cv_ds_ls <- make_cv_ds(cv_results_ls,
-                       select_from_ls_1L_int = select_from_ls_1L_int,
-                       select_from_df_int = select_from_df_int)
-Rand_idx_mat <- make_Rand_idx_mat(cv_ds_ls,
-                                  ds_tb = ds_tb)
-mean_RI_dbl <- mean(Rand_idx_mat,na.rm = TRUE)
-return(mean_RI_dbl)
-}
-calculate_sngl_Rand_idx <- function(i,j,ds_tb){
-  return<-1
-  if(i!=j){
-  ds_tb<-ds_tb[,c(i,j)] %>% na.omit()
-  return <- aricode::RI(ds_tb %>% dplyr::pull(1), # EDITED
-                       ds_tb %>% dplyr::pull(2)) # EDITED
-  }
-  return
-}
-
-get_nbr_of_clss <- function(cv_ds_tb){
-    nbr_of_clss_1L_dbl <- cv_ds_tb %>%
-    dplyr::pull(!!rlang::sym(clss_var_nm_1L_chr)) %>% #
-    unique() %>% 
-    length() + 1
-    return(nbr_of_clss_1L_dbl)
-}
-make_cv_ds <- function(cv_results_ls,
-                       select_from_ls_1L_int = 1L,
-                       select_from_df_int = NA_integer_,
-                       fold_id_nm_1L_chr = "Fold"){
-# cv_results<-lapply(cv_results_ls, `[[`, 2)
-# cv_results<-lapply(cv_results, `[`, c(1,4))
- tfd_cv_results_ls <- lapply(cv_results_ls, `[[`, select_from_ls_1L_int)
- if(!is.na(select_from_df_int[1])){
-   cv_ds_xx <- lapply(tfd_cv_results_ls, `[`, select_from_df_int)
- }else{
-    cv_ds_xx <- data.table::rbindlist(tfd_cv_results_ls, 
-                                   idcol = fold_id_nm_1L_chr) 
- }
-return(cv_ds_xx)
-}
-make_cv_points_ds <- function(smry_cv_ds_tb,
-                              statistic_var_nm_1L_chr,
-                              clss_var_nm_1L_chr = "Classes",
-                              maximise_1L_lgl = F){
-  if(maximise_1L_lgl){
-    fns_ls <- list(fn1 = which.max,
-                   fn2 = max)
-  }else{
-    fns_ls <- list(fn1 = which.min,
-                   fn2 = min)
-  }
-  cv_points_ds_df <- data.frame(var_one = smry_cv_ds_tb[rlang::exec(fns_ls$fn1,smry_cv_ds_tb %>% dplyr::pull(!!rlang::sym(statistic_var_nm_1L_chr))),#DIFF
-                                                        clss_var_nm_1L_chr], 
-                                var_two = rlang::exec(fns_ls$fn2,smry_cv_ds_tb %>%
-                                            dplyr::pull(!!rlang::sym(statistic_var_nm_1L_chr))))
-  names(cv_points_ds_df) <- c(clss_var_nm_1L_chr,statistic_var_nm_1L_chr)#DIFF
-  return(cv_points_ds_df)
-}
-make_average_fit_plt <- function(cv_ds_tb,
-                        nbr_of_clss_1L_dbl,
-                        statistic_var_nm_1L_chr,
-                        clss_var_nm_1L_chr = "Classes",
-                        maximise_1L_lgl = F,
-                        y_label_1L_chr = NA_character_){
-    smry_cv_ds_tb <- make_smry_cv_ds(cv_ds_tb,
-                                 clss_var_nm_1L_chr = clss_var_nm_1L_chr,
-                                 statistic_var_nm_1L_chr = statistic_var_nm_1L_chr) 
-    cv_points_ds_df <- make_cv_points_ds(smry_cv_ds_tb,
-                                         maximise_1L_lgl = maximise_1L_lgl,
-                                         statistic_var_nm_1L_chr = statistic_var_nm_1L_chr)
-    plt <- ggplot2::ggplot(smry_cv_ds_tb) +
-  ggplot2::geom_line(ggplot2::aes(x = !!rlang::sym(clss_var_nm_1L_chr),#
-                                  y = !!rlang::sym(statistic_var_nm_1L_chr)) ) + #DIFF
-  ggplot2::theme_bw() + 
-  ggplot2::theme(legend.position="none") 
-  if(!is.na(y_label_1L_chr)){
-    plt <- plt   + 
-  ggplot2::labs(y=y_label_1L_chr)  #DIFF [EXTRA]
-  }
-  plt <- plt +
-  ggplot2::scale_x_continuous(breaks = 2:nbr_of_clss_1L_dbl,
-                              limits = c(2, nbr_of_clss_1L_dbl)) +
-  ggplot2::geom_point(ggplot2::aes(x = cv_points_ds_df %>% dplyr::pull(!!rlang::sym(clss_var_nm_1L_chr)), #DIFF
-                                   y = cv_points_ds_df %>% dplyr::pull(!!rlang::sym(statistic_var_nm_1L_chr))), #DIFF
-                      color = "red",
-                      size=3) 
-  return(plt)
-}
-make_individual_fit_plt <- function(tfd_cv_ds_tb,
-                                    nbr_of_clss_1L_dbl,
-                                    statistic_var_nm_1L_chr,
-                                    clss_var_nm_1L_chr = "Classes",
-                                    fold_var_nm_1L_chr = "Fold",
-                                    maximise_1L_lgl = F,
-                                    y_label_1L_chr = NA_character_){
-  smry_var_nms_chr <- make_smry_var_nms(statistic_var_nm_1L_chr,
-                                   maximise_1L_lgl = maximise_1L_lgl)
-      plt <- ggplot2::ggplot(tfd_cv_ds_tb,
-                        ggplot2::aes(x = !!rlang::sym(clss_var_nm_1L_chr),#
-                                        y = !!rlang::sym(statistic_var_nm_1L_chr),#DIFF 
-                                        color = factor(!!rlang::sym(fold_var_nm_1L_chr))))
-  if(!is.na(y_label_1L_chr)){
-    plt <- plt   + 
-  ggplot2::labs(y = y_label_1L_chr)  #DIFF [EXTRA]
-  }
-    plt <- plt +
-      ggplot2::geom_line() + 
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position="none") +
-      ggplot2::scale_x_continuous(breaks = 2:nbr_of_clss_1L_dbl,
-                                  limits = c(2, nbr_of_clss_1L_dbl)) +
-      ggplot2::geom_point(ggplot2::aes(x = !!rlang::sym(smry_var_nms_chr[2]), # DIFF 
-                                       y = !!rlang::sym(smry_var_nms_chr[1])), # DIFF 
-                      size=2) 
-  return(plt)
-}
-make_Rand_idx_mat <- function(cv_ds_ls,
-                              ds_tb){
-  RI_calcn_ds_tb <- make_ds_for_RI_calc(cv_ds_ls = cv_ds_ls,
-                                   ds_tb = ds_tb)
-  nbr_of_folds_1L_int <- ncol(RI_calcn_ds_tb)
-  cal_RI <- Vectorize(calculate_sngl_Rand_idx, 
-                      vectorize.args = list("i","j"))
-Rand_idx_mat <- outer(1:nbr_of_folds_1L_int,
-                      1:nbr_of_folds_1L_int,
-                      cal_RI,
-                      data = RI_calcn_ds_tb)
-diag(Rand_idx_mat) <- NA
-return(Rand_idx_mat)
-}
-make_ds_for_RI_calc <- function(cv_ds_ls,
-                             ds_tb,
-                             id_var_nm_1L_chr = "ID"){
-  tfd_ds_tb <- ds_tb  %>% 
-  dplyr::select(!!rlang::sym(id_var_nm_1L_chr))
-for(i in 1:length(cv_ds_ls)){
-  tfd_ds_tb <- tfd_ds_tb %>% 
-    dplyr::left_join(cv_ds_ls[[i]])
-  names(tfd_ds_tb)[i+1] <- paste("fold",i) 
-}
-tfd_ds_tb <- tfd_ds_tb %>% 
-  dplyr::select(-!!rlang::sym(id_var_nm_1L_chr)) %>% 
-  dplyr::mutate_all(as.factor)
-return(tfd_ds_tb)
-}
-make_smry_cv_ds <- function(cv_ds_tb,
-                            statistic_var_nm_1L_chr,
-                            clss_var_nm_1L_chr = "Classes"
-                                      ){
-  smry_cv_ds_tb <- cv_ds_tb %>% # RENAME
-  dplyr::group_by(!!rlang::sym(clss_var_nm_1L_chr)) %>% 
-  dplyr::summarise(!!rlang::sym(statistic_var_nm_1L_chr) := mean(!!rlang::sym(statistic_var_nm_1L_chr))) %>% #DIFF
-  dplyr::ungroup() 
-  return(smry_cv_ds_tb)
-}
-make_smry_var_nms <- function(statistic_var_nm_1L_chr,
-                              maximise_1L_lgl = F){
-    smry_var_nms_chr <- paste0(ifelse(maximise_1L_lgl,"max","min"),
-                            statistic_var_nm_1L_chr,
-                            c("","which"))
-    return(smry_var_nms_chr)
-}
-plot_average_fit <- function(cv_ds_tb,
-                             clss_var_nm_1L_chr = "Classes"){
-  nbr_of_clss_1L_dbl <- get_nbr_of_clss(cv_ds_tb)
-  plot_ls <- list()
-plot_ls[[1]] <- make_average_fit_plt(cv_ds_tb,
-                         nbr_of_clss_1L_dbl = nbr_of_clss_1L_dbl, 
-                         statistic_var_nm_1L_chr = "AIC") 
-plot_ls[[2]] <- make_average_fit_plt(cv_ds_tb,
-                         nbr_of_clss_1L_dbl = nbr_of_clss_1L_dbl, 
-                         statistic_var_nm_1L_chr = "BIC")
-plot_ls[[3]] <- make_average_fit_plt(cv_ds_tb,
-                         maximise_1L_lgl = T,
-                         nbr_of_clss_1L_dbl = nbr_of_clss_1L_dbl, 
-                         statistic_var_nm_1L_chr = "logLik",
-                         y_label_1L_chr = "Log-likelihood")
-average_fit_plt <- gridExtra::grid.arrange(ggpubr::ggarrange(plotlist = plot_ls, 
-                                          ncol=1))
-return(average_fit_plt)
-}
-transform_cv_ds_for_ind_plts <- function(cv_ds_tb,
-                                         clss_var_nm_1L_chr = "Classes",
-                                         fold_var_nm_1L_chr = "Fold"){
-  aic_vars_chr <- make_smry_var_nms("AIC")
-  bic_vars_chr <- make_smry_var_nms("BIC")
-  logLik_vars_chr <- make_smry_var_nms("logLik",
-                                       maximise_1L_lgl = T)
-  tfd_cv_ds_tb <- cv_ds_tb %>% 
-   dplyr::group_by(!!rlang::sym(fold_var_nm_1L_chr)) %>% 
-   dplyr::mutate(!!rlang::sym(aic_vars_chr[1]) := min(AIC),
-          !!rlang::sym(bic_vars_chr[1]) := min(BIC),
-          !!rlang::sym(logLik_vars_chr[1]) := max(logLik)) %>% 
-   dplyr::mutate(!!rlang::sym(aic_vars_chr[2]) := ifelse(!!rlang::sym(aic_vars_chr[1]) == AIC, 
-                                                         !!rlang::sym(clss_var_nm_1L_chr), 
-                                                         NA),
-                 !!rlang::sym(bic_vars_chr[2]) := ifelse(!!rlang::sym(bic_vars_chr[1]) == BIC, 
-                                                         !!rlang::sym(clss_var_nm_1L_chr), 
-                                                         NA),
-                 !!rlang::sym(logLik_vars_chr[2]) := ifelse(!!rlang::sym(logLik_vars_chr[1]) == logLik, 
-                                                         !!rlang::sym(clss_var_nm_1L_chr), 
-                                                         NA)) %>% 
-    dplyr::mutate(!!rlang::sym(aic_vars_chr[2]) := max(!!rlang::sym(aic_vars_chr[2]),na.rm = TRUE),
-                  !!rlang::sym(bic_vars_chr[2]) := max(!!rlang::sym(bic_vars_chr[2]),na.rm = TRUE),
-                  !!rlang::sym(logLik_vars_chr[2]) := max(!!rlang::sym(logLik_vars_chr[2]),na.rm = TRUE)) %>% 
-   dplyr::ungroup()
-  return(tfd_cv_ds_tb)
-}
-plot_individual_fit <- function(cv_ds_tb,
-                                clss_var_nm_1L_chr = "Classes",
-                                fold_var_nm_1L_chr = "Fold",
-                                legend_label_1L_chr = "Datasets"){
-  nbr_of_clss_1L_dbl <- get_nbr_of_clss(cv_ds_tb)
-  tfd_cv_ds_tb <- transform_cv_ds_for_ind_plts(cv_ds_tb,
-                               clss_var_nm_1L_chr = clss_var_nm_1L_chr,
-                                fold_var_nm_1L_chr = fold_var_nm_1L_chr)
-  
-    plot_ls <- list()
-plot_ls[[1]] <- make_individual_fit_plt(tfd_cv_ds_tb,
-                        nbr_of_clss_1L_dbl = nbr_of_clss_1L_dbl,
-                        statistic_var_nm_1L_chr = "AIC",
-                        clss_var_nm_1L_chr = clss_var_nm_1L_chr,
-                        fold_var_nm_1L_chr = fold_var_nm_1L_chr,
-                        maximise_1L_lgl = F,
-                        y_label_1L_chr = NA_character_)
-plot_ls[[2]] <- make_individual_fit_plt(tfd_cv_ds_tb,
-                        nbr_of_clss_1L_dbl = nbr_of_clss_1L_dbl,
-                        statistic_var_nm_1L_chr = "BIC",
-                        clss_var_nm_1L_chr = clss_var_nm_1L_chr,
-                        fold_var_nm_1L_chr = fold_var_nm_1L_chr,
-                        maximise_1L_lgl = F,
-                        y_label_1L_chr = NA_character_) 
-plot_ls[[3]] <- make_individual_fit_plt(tfd_cv_ds_tb,
-                        nbr_of_clss_1L_dbl = nbr_of_clss_1L_dbl,
-                        statistic_var_nm_1L_chr = "logLik",
-                        clss_var_nm_1L_chr = clss_var_nm_1L_chr,
-                        fold_var_nm_1L_chr = fold_var_nm_1L_chr,
-                        maximise_1L_lgl = T,
-                        y_label_1L_chr = "Log-likelihood") 
-legend <- ggplot2::ggplot(tfd_cv_ds_tb, # USE TTU MTHD
-                ggplot2::aes(x = !!rlang::sym(clss_var_nm_1L_chr), 
-                             y= AIC, 
-                             color=factor(!!rlang::sym(fold_var_nm_1L_chr)))) +
-  ggplot2::geom_line() + 
-  ggplot2::theme_bw() + 
-  ggplot2::theme(legend.position = "bottom") +
-  ggplot2::labs(col = legend_label_1L_chr)
-legend <- g_legend(legend)
-individual_fit_plt <- gridExtra::grid.arrange(ggpubr::ggarrange(plotlist = plot_ls,
-                                  ncol=1),
-                        legend, 
-                        nrow = 2, 
-                        heights = c(10, 1))
-return(individual_fit_plt)
-}
-```
 
 ```{r}
 # Install dev_package(s)
 # Load dev_package(s)
 library(depmixS4) # Must be in depends of pkg
 library(ready4use)
+```
+```{r child="Functions.Rmd", echo=FALSE}
 ```
 
 ```{r}
@@ -403,7 +48,11 @@ folds_int <- caret::createFolds(ds_tb$Q1, k = 10,list = FALSE)
 ```{r}
 cv_results_ls <- readRDS("CV_results.rds")
 if(is.null(cv_results_ls)){
-    cv_results_ls<-CrossValidate(ds_tb,folds_int) # CHANGE TO RESULTS_LS
+    cv_results_ls <- make_cvdn_ls(ds_tb,
+                                 folds_int = folds_int,
+                                 var_nms_chr = paste0("Q",
+                                                      1:20)
+                                 ) # CHANGE TO RESULTS_LS
     saveRDS(cv_results_ls,  "CV_results.rds") # CHANGE TO RESULTS_LS
 }
 ```
@@ -428,9 +77,9 @@ individual_fit_plt
 Use Rand index to calculate agreement between each fold.
 ```{r}
 calculate_mean_RI(cv_results_ls,
-                              ds_tb = ds_tb,
-                              select_from_ls_1L_int = 2L,
-                              select_from_df_int = c(1L,4L))
+                  ds_tb = ds_tb,
+                  select_from_ls_1L_int = 2L,
+                  select_from_df_int = c(1L,4L))
 ```
 
 ## LOSO CV
@@ -441,7 +90,7 @@ folds_int <- as.factor(ds_tb$s_centre) %>%# EDITED
   as.numeric() # GENERALISE VARIABLE SELECTION
 loso_results_ls <- readRDS("LOSO_CV_results.rds") # MAKE THIS A FUNCTION.
 if(is.null(loso_results_ls)){
-  loso_results_ls <- CrossValidate(ds_tb,folds_int) 
+  loso_results_ls <- make_cvdn_ls(ds_tb,folds_int) 
   saveRDS(loso_results_ls,  
           "LOSO_CV_results.rds")
 }
@@ -462,12 +111,88 @@ averate_fit_plt
 individual_fit_plt <- plot_individual_fit(loso_ds_tb)
 individual_fit_plt
 ```
-
 ## Agreements between folds
 Use Rand index to calculate agreement between each fold.
 ```{r}
-calculate_mean_RI(loso_results_ls,
+calculate_mean_RI(loso_results_ls, # NOT WORKING
                   ds_tb = ds_tb,
                   select_from_ls_1L_int = 2L,
                   select_from_df_int = c(1L,4L))
 ```
+
+## Split half CV
+
+The testing data is much smaller than the training data and can be a biased representation of the data. Therefore we only broadly evaluate whether the 4 cluster solution identifies similar group membership. 
+
+
+```{r,fig.height=8,fig.width=10}
+print_cluster_plots(ds_tb,
+                    clusters_1L_int = 4,
+                    var_nms_chr = paste0("Q",1:20),
+                    nbr_of_folds_1L_int = 2L)
+ 
+```
+
+## Final clustering 
+
+```{r}
+model_mdl <- fit_mix(ds_tb,
+                    clusters_1L_int = 4,
+                    var_nms_chr = paste0("Q",1:20))
+summary(model_mdl)
+```
+```{r}
+ds_tb <- add_class_var(ds_tb,
+                       clusters_1L_int = 4,
+                       model_mdl = model_mdl)
+```
+
+### Plot
+
+```{r,fig.height=8,fig.width=10, message=FALSE} 
+plot_cluster(ds_tb,
+             cluster_int = ds_tb$class_int)
+```
+
+### PCA visulisation 
+
+```{r}
+pca_df <- make_pca_tbl(ds_tb,
+                      var_nms_chr = paste0("Q",1:20),
+                     class_var_nm_1L_chr = "class_int")
+plot_pca(ds_tb,
+         pca_df = pca_df,
+         class_var_nm_1L_chr = "class_int")
+```
+## Sensitivity analysis 
+
+Sensitivity analysis with k-means clustering based on first five principal compoments. 
+ 
+```{r}
+ds_tb <- add_kmeans_cls_var(ds_tb,
+                            classes_1L_int = 4L,
+                            components_1L_int = 5L,
+                            pca_df = pca_df,
+                            start_1L_int = 25L)
+#cross tabulate
+table(ds_tb$class_int, 
+      ds_tb$kmeans_cls_int)
+
+```
+```{r}
+#check Rand Index
+aricode::RI(ds_tb$class_int,
+            ds_tb$kmeans_cls_int)
+```
+```{r,fig.height=8,fig.width=10} 
+plot_cluster(ds_tb,
+             cluster_int = ds_tb$kmeans_cls_int)
+```
+
+
+
+
+
+
+
+
