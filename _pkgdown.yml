@@ -13,7 +13,7 @@ reference:
 - contents:
   - add_class_var
   - add_kmean_cls_var
-  - calculate_mean_RI
+  - calculate_mean_ri
   - get_fake_aqol6d_ds
   - make_cvdn_ds
   - make_cvdn_ls

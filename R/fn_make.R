@@ -107,17 +107,17 @@ make_cvdn_points_ds <- function (smry_cvdn_ds_tb, statistic_var_nm_1L_chr, clss_
     return(cvdn_points_ds_df)
 }
 #' Make dataset forand Index calculation
-#' @description make_ds_for_RI_calc() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make dataset forand index calculation. The function returns Transformed dataset (a tibble).
+#' @description make_ds_for_ri_calc() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make dataset forand index calculation. The function returns Transformed dataset (a tibble).
 #' @param cvdn_ds_ls Cross-validation dataset (a list)
 #' @param ds_tb Dataset (a tibble)
 #' @param id_var_nm_1L_chr Identity variable name (a character vector of length one), Default: 'ID'
 #' @return Transformed dataset (a tibble)
-#' @rdname make_ds_for_RI_calc
+#' @rdname make_ds_for_ri_calc
 #' @export 
 #' @importFrom dplyr select left_join mutate_all
 #' @importFrom rlang sym
 #' @keywords internal
-make_ds_for_RI_calc <- function (cvdn_ds_ls, ds_tb, id_var_nm_1L_chr = "ID") 
+make_ds_for_ri_calc <- function (cvdn_ds_ls, ds_tb, id_var_nm_1L_chr = "ID") 
 {
     tfd_ds_tb <- ds_tb %>% dplyr::select(!!rlang::sym(id_var_nm_1L_chr))
     for (i in 1:length(cvdn_ds_ls)) {
@@ -181,26 +181,26 @@ make_pca_tbl <- function (ds_tb, var_nms_chr, class_var_nm_1L_chr = "class_int")
         as.factor(ds_tb %>% dplyr::pull(!!rlang::sym(class_var_nm_1L_chr)))))
     return(pca_df)
 }
-#' Makeand index matrix
-#' @description make_Rand_idx_mat() is a Make function that creates a new R object. Specifically, this function implements an algorithm to makeand index matrix. The function returns Rand index (a matrix).
+#' Makeand Index matrix
+#' @description make_ri_mat() is a Make function that creates a new R object. Specifically, this function implements an algorithm to makeand index matrix. The function returns a Rand Index (a matrix).
 #' @param cvdn_ds_ls Cross-validation dataset (a list)
 #' @param ds_tb Dataset (a tibble)
 #' @param id_var_nm_1L_chr Identity variable name (a character vector of length one), Default: 'ID'
-#' @return Rand index (a matrix)
-#' @rdname make_Rand_idx_mat
+#' @return a Rand Index (a matrix)
+#' @rdname make_ri_mat
 #' @export 
 #' @keywords internal
-make_Rand_idx_mat <- function (cvdn_ds_ls, ds_tb, id_var_nm_1L_chr = "ID") 
+make_ri_mat <- function (cvdn_ds_ls, ds_tb, id_var_nm_1L_chr = "ID") 
 {
-    RI_calcn_ds_tb <- make_ds_for_RI_calc(cvdn_ds_ls = cvdn_ds_ls, 
+    RI_calcn_ds_tb <- make_ds_for_ri_calc(cvdn_ds_ls = cvdn_ds_ls, 
         ds_tb = ds_tb, id_var_nm_1L_chr = id_var_nm_1L_chr)
     nbr_of_folds_1L_int <- ncol(RI_calcn_ds_tb)
-    cal_RI <- Vectorize(calculate_sngl_Rand_idx, vectorize.args = list("i", 
+    cal_ri <- Vectorize(calculate_sngl_ri, vectorize.args = list("i", 
         "j"))
-    Rand_idx_mat <- outer(1:nbr_of_folds_1L_int, 1:nbr_of_folds_1L_int, 
-        cal_RI, data_tb = RI_calcn_ds_tb)
-    diag(Rand_idx_mat) <- NA
-    return(Rand_idx_mat)
+    ri_mat <- outer(1:nbr_of_folds_1L_int, 1:nbr_of_folds_1L_int, 
+        cal_ri, data_tb = RI_calcn_ds_tb)
+    diag(ri_mat) <- NA
+    return(ri_mat)
 }
 #' Make summary cross-validation dataset
 #' @description make_smry_cvdn_ds() is a Make function that creates a new R object. Specifically, this function implements an algorithm to make summary cross-validation dataset. The function returns Summary cross-validation dataset (a tibble).

@@ -89,23 +89,23 @@ make_individual_fit_plt <- function(tfd_cvdn_ds_tb,
                         size=2)
   return(plt)
 }
-make_Rand_idx_mat <- function(cvdn_ds_ls,
+make_ri_mat <- function(cvdn_ds_ls,
                               ds_tb,
                               id_var_nm_1L_chr = "ID"){
-  RI_calcn_ds_tb <- make_ds_for_RI_calc(cvdn_ds_ls = cvdn_ds_ls,
+  RI_calcn_ds_tb <- make_ds_for_ri_calc(cvdn_ds_ls = cvdn_ds_ls,
                                         ds_tb = ds_tb,
                                         id_var_nm_1L_chr = id_var_nm_1L_chr)
   nbr_of_folds_1L_int <- ncol(RI_calcn_ds_tb)
-  cal_RI <- Vectorize(calculate_sngl_Rand_idx,
+  cal_ri <- Vectorize(calculate_sngl_ri,
                       vectorize.args = list("i","j"))
-  Rand_idx_mat <- outer(1:nbr_of_folds_1L_int,
+  ri_mat <- outer(1:nbr_of_folds_1L_int,
                         1:nbr_of_folds_1L_int,
-                        cal_RI,
+                        cal_ri,
                         data_tb = RI_calcn_ds_tb)
-  diag(Rand_idx_mat) <- NA
-  return(Rand_idx_mat)
+  diag(ri_mat) <- NA
+  return(ri_mat)
 }
-make_ds_for_RI_calc <- function(cvdn_ds_ls,
+make_ds_for_ri_calc <- function(cvdn_ds_ls,
                                 ds_tb,
                                 id_var_nm_1L_chr = "ID"){
   tfd_ds_tb <- ds_tb  %>%

@@ -6,7 +6,7 @@ x <- ready4fun::make_pkg_desc_ls(pkg_title_1L_chr = "Explore and Characterise He
   This development version of the heterodox package has been made available as part of the process of testing and documenting the package.
                             If you have any questions, please contact the authors.",
                                  authors_prsn = c(utils::person(given = "Caroline",family = "Gao",email = "caroline.gao@orygen.org.au", role = c("aut"),comment = c(ORCID = "0000-0002-0987-2759")),
-                                                  utils::person(given = "Matthew",family = "Hamilton",email = "matthew.hamilton@orygen.org.au", role = c("aut", "cre"),comment = c(ORCID = "0000-0001-7407-9194")),
+                                                  utils::person(given = "Matthew", family = "Hamilton",email = "matthew.hamilton@orygen.org.au", role = c("aut", "cre"),comment = c(ORCID = "0000-0001-7407-9194")),
                                                   utils::person("Orygen", role = c("cph", "fnd")),
                                                   utils::person("Headspace", role = c( "fnd")),
                                                   utils::person("National Health and Medical Research Council", role = c( "fnd"))),
@@ -21,7 +21,7 @@ x <- ready4fun::make_pkg_desc_ls(pkg_title_1L_chr = "Explore and Characterise He
                            copyright_holders_chr = "Orygen",
                            custom_dmt_ls = ready4fun::make_custom_dmt_ls(user_manual_fns_chr = c("add_class_var",
                                                                                                  "add_kmean_cls_var",
-                                                                                                 "calculate_mean_RI",
+                                                                                                 "calculate_mean_ri",
                                                                                                  "fit_mix",
                                                                                                  "get_fake_aqol6d_ds",
                                                                                                  "make_cvdn_ds",

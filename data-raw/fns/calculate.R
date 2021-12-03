@@ -1,4 +1,4 @@
-calculate_mean_RI <- function(cvdn_results_ls,
+calculate_mean_ri <- function(cvdn_results_ls,
                               ds_tb,
                               fold_id_nm_1L_chr = "Fold",
                               id_var_nm_1L_chr = "ID",
@@ -8,18 +8,18 @@ calculate_mean_RI <- function(cvdn_results_ls,
                          fold_id_nm_1L_chr = fold_id_nm_1L_chr,
                          select_from_ls_1L_int = select_from_ls_1L_int,
                          select_from_df_int = select_from_df_int)
-  Rand_idx_mat <- make_Rand_idx_mat(cvdn_ds_ls,
+  ri_mat <- make_ri_mat(cvdn_ds_ls,
                                     ds_tb = ds_tb,
                                     id_var_nm_1L_chr = id_var_nm_1L_chr)
-  mean_RI_dbl <- mean(Rand_idx_mat,na.rm = TRUE)
-  return(mean_RI_dbl)
+  mean_ri_dbl <- mean(ri_mat,na.rm = TRUE)
+  return(mean_ri_dbl)
 }
-calculate_sngl_Rand_idx <- function(i,j,data_tb){
-  Rand_idx_dbl <- 1
+calculate_sngl_ri <- function(i,j,data_tb){
+  ri_dbl <- 1
   if(i!=j){
     data_tb <- data_tb[,c(i,j)] %>% na.omit()
-    Rand_idx_dbl <- aricode::RI(data_tb %>% dplyr::pull(1), # EDITED
+    ri_dbl <- aricode::RI(data_tb %>% dplyr::pull(1), # EDITED
                                 data_tb %>% dplyr::pull(2)) # EDITED
   }
-  return(Rand_idx_dbl)
+  return(ri_dbl)
 }
