@@ -31,7 +31,7 @@
     <loc>/reference/calculate_mean_RI.html</loc>
   </url>
   <url>
-    <loc>/reference/calculate_sngl_Rand_idx.html</loc>
+    <loc>/reference/calculate_sngl_ri.html</loc>
   </url>
   <url>
     <loc>/reference/deprecated.html</loc>
@@ -55,9 +55,6 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/make_Rand_idx_mat.html</loc>
-  </url>
-  <url>
     <loc>/reference/make_average_fit_plt.html</loc>
   </url>
   <url>
@@ -77,6 +74,9 @@
   </url>
   <url>
     <loc>/reference/make_pca_tbl.html</loc>
+  </url>
+  <url>
+    <loc>/reference/make_ri_mat.html</loc>
   </url>
   <url>
     <loc>/reference/make_smry_cvdn_ds.html</loc>
