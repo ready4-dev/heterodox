@@ -1,10 +1,10 @@
 Package: heterodox
 Title: Explore and Characterise Heterogeneity in Quality of Life Data
-Version: 0.0.0.9005
+Version: 0.0.0.9006
 Authors@R: c(
     person("Caroline", "Gao", , "caroline.gao@orygen.org.au", role = "aut",
            comment = c(ORCID = "0000-0002-0987-2759")),
-    person("Matthew", "Hamilton", , "matthew.hamilton@orygen.org.au", role = c("aut", "cre"),
+    person("Matthew", "Hamilton", , "matthew.hamilton1@monash.edu", role = c("aut", "cre", "fnd"),
            comment = c(ORCID = "0000-0001-7407-9194")),
     person("Orygen", role = c("cph", "fnd")),
     person("Headspace", role = "fnd"),
@@ -20,7 +20,7 @@ URL: https://ready4-dev.github.io/heterodox/,
     https://ready4-dev.github.io/ready4/
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Imports: 
     aricode,
     caret,
@@ -42,7 +42,7 @@ Imports:
     stringr,
     testthat,
     tidyselect,
-    youthvars (>= 0.0.0.9080)
+    youthvars (>= 0.0.0.9123)
 VignetteBuilder: knitr
 Depends: 
     depmixS4,
