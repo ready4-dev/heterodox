@@ -17,3 +17,5 @@
 ^data-raw/NOTES\.R$
 ^\.github$
 ^initial_setup\.R$
+^doc$
+^Meta$
