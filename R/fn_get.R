@@ -1,5 +1,5 @@
 #' Get fake Assessment of Quality of Life Six Dimension dataset
-#' @description get_fake_aqol6d_ds() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get fake assessment of quality of life six dimension dataset. The function returns Dataset (a tibble).
+#' @description get_fake_aqol6d_ds() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get fake assessment of quality of life six dimension dataset. The function returns Dataset (a tibble).
 
 #' @return Dataset (a tibble)
 #' @rdname get_fake_aqol6d_ds
@@ -19,7 +19,7 @@ get_fake_aqol6d_ds <- function ()
     return(ds_tb)
 }
 #' Get number of classes
-#' @description get_nbr_of_clss() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get number of classes. Function argument cvdn_ds_tb specifies the where to look for the required object. The function returns Number of classes (a double vector of length one).
+#' @description get_nbr_of_clss() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get number of classes. The function returns Number of classes (a double vector of length one).
 #' @param cvdn_ds_tb Cross-validation dataset (a tibble)
 #' @param clss_var_nm_1L_chr Classes variable name (a character vector of length one), Default: 'Classes'
 #' @return Number of classes (a double vector of length one)

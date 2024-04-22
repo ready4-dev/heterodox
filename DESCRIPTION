@@ -14,7 +14,7 @@ Description: Tools to explore heterogeneity in quality of life data.  This
     development version of the heterodox package has been made available
     as part of the process of testing and documenting the package.  If you
     have any questions, please contact the authors.
-License: GPL-3 + file LICENSE
+License: GPL-3
 URL: https://ready4-dev.github.io/heterodox/,
     https://github.com/ready4-dev/heterodox,
     https://ready4-dev.github.io/ready4/
@@ -23,6 +23,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Suggests: 
     knitr,
+    pkgload,
     rmarkdown,
     testthat
 VignetteBuilder: knitr

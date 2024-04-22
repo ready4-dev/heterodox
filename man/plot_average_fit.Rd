@@ -15,5 +15,5 @@ plot_average_fit(cvdn_ds_tb, clss_var_nm_1L_chr = "Classes")
 Average fit (a plot)
 }
 \description{
-plot_average_fit() is a Plot function that plots data Specifically, this function implements an algorithm to plot average fit. The function returns Average fit (a plot).
+plot_average_fit() is a Plot function that plots data. Specifically, this function implements an algorithm to plot average fit. The function returns Average fit (a plot).
 }

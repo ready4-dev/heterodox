@@ -13,6 +13,9 @@ plot_pca(ds_tb, pca_df, class_var_nm_1L_chr = "class_int")
 
 \item{class_var_nm_1L_chr}{Class variable name (a character vector of length one), Default: 'class_int'}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
-plot_pca() is a Plot function that plots data Specifically, this function implements an algorithm to plot principal component analysis. The function is called for its side effects and does not return a value.
+plot_pca() is a Plot function that plots data. Specifically, this function implements an algorithm to plot principal component analysis. The function is called for its side effects and does not return a value.
 }

@@ -24,5 +24,5 @@ plot_individual_fit(
 Individual fit (a plot)
 }
 \description{
-plot_individual_fit() is a Plot function that plots data Specifically, this function implements an algorithm to plot individual fit. The function returns Individual fit (a plot).
+plot_individual_fit() is a Plot function that plots data. Specifically, this function implements an algorithm to plot individual fit. The function returns Individual fit (a plot).
 }

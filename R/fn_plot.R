@@ -1,5 +1,5 @@
 #' Plot average fit
-#' @description plot_average_fit() is a Plot function that plots data Specifically, this function implements an algorithm to plot average fit. The function returns Average fit (a plot).
+#' @description plot_average_fit() is a Plot function that plots data. Specifically, this function implements an algorithm to plot average fit. The function returns Average fit (a plot).
 #' @param cvdn_ds_tb Cross-validation dataset (a tibble)
 #' @param clss_var_nm_1L_chr Classes variable name (a character vector of length one), Default: 'Classes'
 #' @return Average fit (a plot)
@@ -23,10 +23,10 @@ plot_average_fit <- function (cvdn_ds_tb, clss_var_nm_1L_chr = "Classes")
     return(average_fit_plt)
 }
 #' Plot cluster
-#' @description plot_cluster() is a Plot function that plots data Specifically, this function implements an algorithm to plot cluster. The function is called for its side effects and does not return a value.
+#' @description plot_cluster() is a Plot function that plots data. Specifically, this function implements an algorithm to plot cluster. The function is called for its side effects and does not return a value.
 #' @param ds_tb Dataset (a tibble)
 #' @param cluster_int Cluster (an integer vector)
-#' @return NULL
+#' @return No return value, called for side effects.
 #' @rdname plot_cluster
 #' @export 
 #' @importFrom stringr str_to_sentence str_sub
@@ -66,7 +66,7 @@ plot_cluster <- function (ds_tb, cluster_int)
         1)))
 }
 #' Plot individual fit
-#' @description plot_individual_fit() is a Plot function that plots data Specifically, this function implements an algorithm to plot individual fit. The function returns Individual fit (a plot).
+#' @description plot_individual_fit() is a Plot function that plots data. Specifically, this function implements an algorithm to plot individual fit. The function returns Individual fit (a plot).
 #' @param cvdn_ds_tb Cross-validation dataset (a tibble)
 #' @param clss_var_nm_1L_chr Classes variable name (a character vector of length one), Default: 'Classes'
 #' @param fold_var_nm_1L_chr Fold variable name (a character vector of length one), Default: 'Fold'
@@ -108,11 +108,11 @@ plot_individual_fit <- function (cvdn_ds_tb, clss_var_nm_1L_chr = "Classes", fol
     return(individual_fit_plt)
 }
 #' Plot principal component analysis
-#' @description plot_pca() is a Plot function that plots data Specifically, this function implements an algorithm to plot principal component analysis. The function is called for its side effects and does not return a value.
+#' @description plot_pca() is a Plot function that plots data. Specifically, this function implements an algorithm to plot principal component analysis. The function is called for its side effects and does not return a value.
 #' @param ds_tb Dataset (a tibble)
 #' @param pca_df Principal component analysis (a data.frame)
 #' @param class_var_nm_1L_chr Class variable name (a character vector of length one), Default: 'class_int'
-#' @return NULL
+#' @return No return value, called for side effects.
 #' @rdname plot_pca
 #' @export 
 #' @importFrom ggplot2 ggplot aes geom_jitter theme_bw

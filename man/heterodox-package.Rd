@@ -2,7 +2,6 @@
 % Please edit documentation in R/heterodox-package.R, R/pkg_heterodox.R
 \docType{package}
 \name{heterodox-package}
-\alias{heterodox}
 \alias{heterodox-package}
 \title{heterodox: Explore and Characterise Heterogeneity in Quality of Life Data}
 \description{
@@ -32,7 +31,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Matthew Hamilton \email{matthew.hamilton1@monash.edu} (\href{https://orcid.org/0000-0001-7407-9194}{ORCID}) [funder]
+\strong{Maintainer}: Matthew Hamilton \email{matthew.hamilton1@monash.edu} (\href{https://orcid.org/0000-0001-7407-9194}{ORCID}) [funder, copyright holder]
 
 Authors:
 \itemize{

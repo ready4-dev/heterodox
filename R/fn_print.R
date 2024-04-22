@@ -1,11 +1,11 @@
 #' Print cluster plots
-#' @description print_cluster_plots() is a Print function that prints output to console Specifically, this function implements an algorithm to print cluster plots. The function is called for its side effects and does not return a value.
+#' @description print_cluster_plots() is a Print function that prints output to console. Specifically, this function implements an algorithm to print cluster plots. The function is called for its side effects and does not return a value.
 #' @param ds_tb Dataset (a tibble)
 #' @param clusters_1L_int Clusters (an integer vector of length one)
 #' @param var_nms_chr Variable names (a character vector)
 #' @param nbr_of_folds_1L_int Number of folds (an integer vector of length one), Default: 2
 #' @param var_idx_1L_int Variable index (an integer vector of length one), Default: 1
-#' @return NULL
+#' @return No return value, called for side effects.
 #' @rdname print_cluster_plots
 #' @export 
 #' @importFrom caret createFolds

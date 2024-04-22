@@ -10,5 +10,5 @@ get_fake_aqol6d_ds()
 Dataset (a tibble)
 }
 \description{
-get_fake_aqol6d_ds() is a Get function that retrieves a pre-existing data object from memory, local file system or online repository. Specifically, this function implements an algorithm to get fake assessment of quality of life six dimension dataset. The function returns Dataset (a tibble).
+get_fake_aqol6d_ds() is a Get function that extracts data from an object. Specifically, this function implements an algorithm to get fake assessment of quality of life six dimension dataset. The function returns Dataset (a tibble).
 }

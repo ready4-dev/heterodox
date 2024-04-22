@@ -23,6 +23,9 @@ print_cluster_plots(
 
 \item{var_idx_1L_int}{Variable index (an integer vector of length one), Default: 1}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
-print_cluster_plots() is a Print function that prints output to console Specifically, this function implements an algorithm to print cluster plots. The function is called for its side effects and does not return a value.
+print_cluster_plots() is a Print function that prints output to console. Specifically, this function implements an algorithm to print cluster plots. The function is called for its side effects and does not return a value.
 }

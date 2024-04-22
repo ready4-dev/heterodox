@@ -1,5 +1,5 @@
 #' Add class variable
-#' @description add_class_var() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add class variable. Function argument ds_tb specifies the object to be updated. The function returns Dataset (a tibble).
+#' @description add_class_var() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add class variable. The function returns Dataset (a tibble).
 #' @param ds_tb Dataset (a tibble)
 #' @param clusters_1L_int Clusters (an integer vector of length one)
 #' @param model_mdl Model (a model)
@@ -17,7 +17,7 @@ add_class_var <- function (ds_tb, clusters_1L_int, model_mdl, class_var_nm_1L_ch
     return(ds_tb)
 }
 #' Add k-means clustering class variable
-#' @description add_kmean_cls_var() is an Add function that updates an object by adding data to that object. Specifically, this function implements an algorithm to add k-means clustering class variable. Function argument ds_tb specifies the object to be updated. The function returns Dataset (a tibble).
+#' @description add_kmean_cls_var() is an Add function that updates an object by adding new values to new or empty fields. Specifically, this function implements an algorithm to add k-means clustering class variable. The function returns Dataset (a tibble).
 #' @param ds_tb Dataset (a tibble)
 #' @param classes_1L_int Classes (an integer vector of length one)
 #' @param components_1L_int Components (an integer vector of length one)

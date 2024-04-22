@@ -1,5 +1,5 @@
 #' Fit mixture model
-#' @description fit_mixture_mdl() is a Fit function that fits a model of a specified type to a dataset Specifically, this function implements an algorithm to fit mixture model. The function returns Model (a model).
+#' @description fit_mixture_mdl() is a Fit function that fits a model of a specified type to a dataset. Specifically, this function implements an algorithm to fit mixture model. The function returns Model (a model).
 #' @param ds_tb Dataset (a tibble)
 #' @param clusters_1L_int Clusters (an integer vector of length one)
 #' @param var_nms_chr Variable names (a character vector)
@@ -19,7 +19,7 @@ fit_mixture_mdl <- function (ds_tb, clusters_1L_int, var_nms_chr)
     return(model_mdl)
 }
 #' Fit mixture model clusters
-#' @description fit_mixture_mdl_clusters() is a Fit function that fits a model of a specified type to a dataset Specifically, this function implements an algorithm to fit mixture model clusters. The function returns Model summary (a list).
+#' @description fit_mixture_mdl_clusters() is a Fit function that fits a model of a specified type to a dataset. Specifically, this function implements an algorithm to fit mixture model clusters. The function returns Model summary (a list).
 #' @param ds_tb Dataset (a tibble)
 #' @param nbr_clss_1L_int Number classes (an integer vector of length one), Default: 15
 #' @param var_nms_chr Variable names (a character vector)

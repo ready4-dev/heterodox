@@ -17,6 +17,6 @@ fit_mixture_mdl_clusters(ds_tb, nbr_clss_1L_int = 15L, var_nms_chr)
 Model summary (a list)
 }
 \description{
-fit_mixture_mdl_clusters() is a Fit function that fits a model of a specified type to a dataset Specifically, this function implements an algorithm to fit mixture model clusters. The function returns Model summary (a list).
+fit_mixture_mdl_clusters() is a Fit function that fits a model of a specified type to a dataset. Specifically, this function implements an algorithm to fit mixture model clusters. The function returns Model summary (a list).
 }
 \keyword{internal}

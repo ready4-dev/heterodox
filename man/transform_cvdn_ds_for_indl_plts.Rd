@@ -21,6 +21,6 @@ transform_cvdn_ds_for_indl_plts(
 Transformed cross-validation dataset (a tibble)
 }
 \description{
-transform_cvdn_ds_for_indl_plts() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform cross-validation dataset for individual plots. Function argument cvdn_ds_tb specifies the object to be updated. Argument clss_var_nm_1L_chr provides the object to be updated. The function returns Transformed cross-validation dataset (a tibble).
+transform_cvdn_ds_for_indl_plts() is a Transform function that edits an object in such a way that core object attributes - e.g. shape, dimensions, elements, type - are altered. Specifically, this function implements an algorithm to transform cross-validation dataset for individual plots. The function returns Transformed cross-validation dataset (a tibble).
 }
 \keyword{internal}

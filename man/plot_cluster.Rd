@@ -11,6 +11,9 @@ plot_cluster(ds_tb, cluster_int)
 
 \item{cluster_int}{Cluster (an integer vector)}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
-plot_cluster() is a Plot function that plots data Specifically, this function implements an algorithm to plot cluster. The function is called for its side effects and does not return a value.
+plot_cluster() is a Plot function that plots data. Specifically, this function implements an algorithm to plot cluster. The function is called for its side effects and does not return a value.
 }
