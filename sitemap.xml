@@ -4,9 +4,6 @@
     <loc>https://ready4-dev.github.io/heterodox/404.html</loc>
   </url>
   <url>
-    <loc>https://ready4-dev.github.io/heterodox/LICENSE-text.html</loc>
-  </url>
-  <url>
     <loc>https://ready4-dev.github.io/heterodox/LICENSE.html</loc>
   </url>
   <url>
@@ -35,6 +32,9 @@
   </url>
   <url>
     <loc>https://ready4-dev.github.io/heterodox/reference/deprecated.html</loc>
+  </url>
+  <url>
+    <loc>https://ready4-dev.github.io/heterodox/reference/dotdata.html</loc>
   </url>
   <url>
     <loc>https://ready4-dev.github.io/heterodox/reference/fit_mixture_mdl.html</loc>
@@ -83,6 +83,9 @@
   </url>
   <url>
     <loc>https://ready4-dev.github.io/heterodox/reference/make_smry_var_nms.html</loc>
+  </url>
+  <url>
+    <loc>https://ready4-dev.github.io/heterodox/reference/nseequals.html</loc>
   </url>
   <url>
     <loc>https://ready4-dev.github.io/heterodox/reference/pipe.html</loc>
